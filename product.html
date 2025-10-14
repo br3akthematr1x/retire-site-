@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Product — RETIRE</title>
+  <meta name="theme-color" content="#0b0b0c" />
+  <link rel="icon" href="/assets/img/favicon.png"/>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+
+  <style>
+    /* ===== Layout ===== */
+    .pdp{padding:32px 0 90px}
+    .pdp-header{display:flex;gap:10px;align-items:center;margin-bottom:14px;color:#b9bbc1;font-size:13px;flex-wrap:wrap}
+    .pdp-header a{color:#b9bbc1}
+    .pdp-header .sep{opacity:.4}
+
+    .pdp-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
+      gap:28px;align-items:start
+    }
+    @media (max-width:1000px){ .pdp-grid{grid-template-columns:1fr} }
+
+    /* ===== Gallery ===== */
+    .pdp-gallery{
+      background:#000000;border:1px solid rgba(255,255,255,.08);
+      border-radius:22px;padding:14px
+    }
+    .pdp-hero{
+      aspect-ratio:1/1;background:#121216;border-radius:16px;overflow:hidden;display:grid;place-items:center
+    }
+    .pdp-hero img{
+      width:100%;height:100%;object-fit:contain;
+      transition:transform .22s ease;background:#0f0f11
+    }
+    .pdp-hero:hover img{transform:scale(1.02)}
+
+    .pdp-thumbs{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:12px}
+    @media (max-width:700px){
+      .pdp-thumbs{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+      .pdp-thumbs::-webkit-scrollbar{height:6px}
+    }
+    .pdp-thumb{
+      position:relative;min-width:70px;
+      border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden;
+      background:#121216;cursor:pointer;transition:border-color .15s ease,box-shadow .15s ease
+    }
+    .pdp-thumb img{
+      width:100%;height:100%;object-fit:contain;aspect-ratio:1/1;display:block;opacity:.9;transition:opacity .15s;background:#0f0f11
+    }
+    .pdp-thumb:hover img{opacity:1}
+    .pdp-thumb.is-active{border-color:#fff;box-shadow:0 0 0 2px #fff inset}
+
+    /* ===== Info Column ===== */
+    .pdp-info{
+      position:sticky;top:92px;background:#0f0f11;border:1px solid rgba(255,255,255,.08);
+      border-radius:22px;padding:18px
+    }
+    @media (max-width:1000px){ .pdp-info{position:static} }
+    .pdp-badge{display:inline-flex;align-items:center;gap:6px;background:#141416;border:1px solid rgba(255,255,255,.08);color:#dfe1e6;padding:6px 10px;border-radius:999px;font-size:12px;margin-bottom:10px}
+    .pdp-title{margin:0 0 6px;font-size:26px;font-weight:900;letter-spacing:.2px}
+    .pdp-price{font-weight:900;margin:0 0 14px;font-size:18px}
+    .pdp-form{display:grid;gap:12px;margin-top:10px}
+    .pdp-row{display:grid;gap:8px}
+    .pdp-select,.pdp-qty{background:#101013;color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px;font-size:15px}
+
+    .pdp-actions{display:flex;gap:10px;margin-top:4px;flex-wrap:wrap}
+    .pdp-actions .btn{flex:1 1 220px;min-height:44px}
+    .btn.primary{background:#fff;color:#000}
+    .btn[disabled]{opacity:.6;cursor:not-allowed}
+
+    .mutey{color:#b9bbc1}
+
+    /* ===== Accordion (native details/summary) ===== */
+    .accordion{border-top:1px solid rgba(255,255,255,.08);margin-top:16px}
+    .acc-item{border-bottom:1px solid rgba(255,255,255,.08);padding:0}
+    .acc-item > summary.acc-btn{
+      list-style:none;
+      background:transparent;border:0;color:#fff;padding:14px 0;
+      font-weight:800;cursor:pointer;display:flex;justify-content:space-between;align-items:center
+    }
+    .acc-item > summary::-webkit-details-marker{display:none} /* hide default marker */
+    .acc-panel{padding:0 0 14px;color:#b9bbc1;line-height:1.7}
+    .acc-item .chev{transition:transform .2s ease}
+    .acc-item[open] .chev{transform:rotate(180deg)}
+
+    /* ===== Bottom sticky add-to-cart bar ===== */
+    .pdp-bar{
+      position:fixed;left:0;right:0;bottom:0;z-index:55;background:rgba(10,10,11,.92);
+      backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.08);
+      padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:none;gap:12px
+    }
+    .pdp-bar .price{font-weight:900}
+    @media (max-width:900px){ .pdp-bar{display:flex;align-items:center;justify-content:space-between} }
+    .pdp-bar .btn{min-width:120px;min-height:44px}
+
+    /* ===== YOU MAY ALSO LIKE (remove borders) ===== */
+    #recoGrid .card{border:none !important;background:transparent !important;box-shadow:none !important}
+    #recoGrid .media{background:transparent !important}
+    #recoGrid .media img{border:none !important;background:#0f0f11}
+
+    /* ===== PDP — never crop product photos on mobile/anywhere ===== */
+
+/* 1) Let the hero container size to the image; no hard 1:1 box */
+.pdp-hero{
+  /* remove the square & cropping */
+  aspect-ratio: auto !important;
+  overflow: visible !important;
+
+  /* keep your styling */
+  background:#121216;
+  border-radius:16px;
+  display:flex;                 /* center the image neatly */
+  align-items:center;
+  justify-content:center;
+}
+
+/* 2) Images scale to fit without cropping */
+.pdp-hero img{
+  width: 100%;
+  height: auto;                 /* keep natural aspect ratio */
+  max-height: 100%;             /* don’t overflow the box */
+  object-fit: contain !important;
+  object-position: center;
+  display:block;
+  background:#0f0f11;
+  transition: transform .22s ease;
+}
+
+/* 3) On small screens, cap height to viewport so the hero never
+      runs under the sticky add-to-cart bar or off-screen */
+@media (max-width: 700px){
+  .pdp-hero{
+    /* keep the image fully visible on short viewports */
+    max-height: calc(100vh - 220px);
+  }
+  .pdp-hero img{
+    max-height: calc(100vh - 220px); /* match container cap */
+  }
+}
+
+/* 4) Thumbnails should also never crop */
+.pdp-thumb img{
+  width: 100%;
+  height: auto;
+  object-fit: contain !important;
+  aspect-ratio: auto !important;
+  display: block;
+}
+
+/* 5) Give the page bottom breathing room so the sticky bar
+      never covers gallery/info content on mobile */
+@media (max-width: 900px){
+  .pdp{
+    padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  .pdp-bar{
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* 6) Small polish: keep the info card from overlapping the header
+      and make its sticky behavior friendlier on mobile */
+.pdp-info{
+  top: 92px; /* already present; keep it explicit */
+}
+@media (max-width: 1000px){
+  .pdp-info{ position: static; }
+}
+/* ===== Mobile-only: never crop; always shrink-to-fit ===== */
+@media (max-width: 700px){
+  .pdp-hero{
+    /* let the box size to the image and keep it on screen */
+    aspect-ratio: auto !important;
+    overflow: visible !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* cap height so tall images don't run under the sticky bar */
+    max-height: calc(100vh - 220px);
+  }
+  .pdp-hero img{
+    width: 100%;
+    height: auto;                         /* keep original aspect ratio */
+    max-height: calc(100vh - 220px);      /* same cap as container */
+    object-fit: contain !important;       /* never crop */
+    object-position: center;
+    image-rendering: auto;                /* avoid pixelation */
+  }
+
+  /* thumbs also never crop */
+  .pdp-thumb img{
+    width: 100%;
+    height: auto;
+    object-fit: contain !important;
+    aspect-ratio: auto !important;
+  }
+
+  /* add bottom room so sticky add-to-cart won't cover anything */
+  .pdp{ padding-bottom: calc(110px + env(safe-area-inset-bottom,0px)) !important; }
+}
+
+  </style>
+</head>
+<body>
+  <input type="checkbox" id="drawer-toggle" hidden>
+  <body class="products-page">
+
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="nav">
+        <label class="menu-btn" for="drawer-toggle" aria-label="Open menu" role="button" tabindex="0">☰</label>
+        <a class="brand" href="/"><img class="logo-img" src="/assets/img/retire-logo.png" alt="RETIRE"></a>
+        <div class="spacer"></div>
+        <form class="search" role="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="#fff" stroke-width="1.5" fill="none"/><path d="M20 20L17 17" stroke="#fff" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+          <input placeholder="Search products..." />
+        </form>
+        <div class="icons">
+          <a id="openCart" class="icon-btn" href="javascript:void(0)" aria-label="Cart">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z" fill="none" stroke="#EDEDED" stroke-width="1.5"/><path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="#EDEDED" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span class="cart-badge" id="cartCount" style="display:none">0</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Drawer -->
+  <label class="drawer-overlay" for="drawer-toggle" aria-hidden="true"></label>
+  <aside class="drawer" role="dialog" aria-modal="true" aria-label="Main menu">
+    <div class="drawer-header">
+      <label class="close-btn" for="drawer-toggle" aria-label="Close menu" role="button" tabindex="0">✕</label>
+    </div>
+    <nav class="drawer-nav">
+      <a class="drawer-link" href="/products.html">Merch</a>
+      <a class="drawer-link" href="/retire-calculator.html">Retirement Tools</a>
+      <a class="drawer-link" href="/about.html">About Us</a>
+      <a class="drawer-link" href="/contact.html">Contact Us</a>
+    </nav>
+  </aside>
+
+  <!-- CART DRAWER -->
+  <div class="cart-overlay"></div>
+  <aside class="cart-panel" aria-label="Cart" aria-modal="true" role="dialog">
+    <div class="cart-header">
+      <strong>Your Cart</strong>
+      <button id="cartClose" class="cart-close" aria-label="Close">✕</button>
+    </div>
+    <div id="cartItems" class="cart-items"></div>
+    <div class="cart-footer">
+      <div class="cart-subrow">
+        <span>Subtotal</span>
+        <strong id="cartSubtotal">$0.00 USD</strong>
+      </div>
+      <button id="cartCheckout" class="cart-checkout" type="button">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18">
+          <path d="M17 11V8a5 5 0 0 0-10 0v3M6 9h12v10H6z" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Secure Checkout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- PDP -->
+  <main class="container pdp">
+    <div class="pdp-header">
+      <a href="/">Home</a><span class="sep">/</span>
+      <a href="/products.html">Merch</a><span class="sep">/</span>
+      <span id="crumbTitle">Loading…</span>
+    </div>
+
+    <div class="pdp-grid">
+      <section class="pdp-gallery">
+        <div class="pdp-hero"><img id="pdpHero" alt=""></div>
+        <div class="pdp-thumbs" id="pdpThumbs"></div>
+      </section>
+
+      <section class="pdp-info" id="pdpInfo">
+        <div class="pdp-badge" id="stockBadge" hidden>
+          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="#fff" fill="none"/><path d="M8 12l3 3 5-6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+          <span>In Stock</span>
+        </div>
+        <h1 class="pdp-title" id="pdpTitle">Loading…</h1>
+        <div class="mutey" id="pdpVendor" hidden></div>
+        <div class="pdp-price" id="pdpPrice"></div>
+
+        <form class="pdp-form" id="pdpForm">
+          <div id="optionRows"></div>
+
+          <div class="pdp-row">
+            <label for="qty">Quantity</label>
+            <input id="qty" class="pdp-qty" type="number" min="1" value="1" inputmode="numeric">
+          </div>
+
+          <div class="pdp-actions">
+            <button type="submit" class="btn primary" id="addBtn">Add to Cart</button>
+            <a id="viewOnShopify" class="btn" target="_blank" rel="noreferrer">View on Shop</a>
+          </div>
+        </form>
+
+        <!-- ✅ CSP-proof accordion -->
+        <section class="accordion" id="accRoot">
+          <details class="acc-item" open>
+            <summary class="acc-btn">
+              Description
+              <svg class="chev" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+            </summary>
+            <div class="acc-panel" id="pdpDesc"></div>
+          </details>
+
+          <details class="acc-item">
+            <summary class="acc-btn">
+              Shipping & Returns
+              <svg class="chev" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+            </summary>
+            <div class="acc-panel">
+              <p><strong>Shipping</strong></p>
+              <ul>
+                <li>Processing time: 1–2 business days.</li>
+                <li>Transit time: 2–6 business days (US/Canada); 6–12 business days (international).</li>
+                <li>Tracking is provided on all orders once dispatched.</li>
+              </ul>
+              <p><strong>Returns</strong></p>
+              <ul>
+                <li>Return window: 14 days from delivery for unworn items in original condition.</li>
+                <li>How to start a return: email <a href="mailto:retireonsol@gmail.com">retireonsol@gmail.com</a> with your order #.</li>
+                <li>Refunds issued to original payment method after inspection.</li>
+              </ul>
+              <p class="mutey">Final sale items, gift cards, and worn/washed merchandise are not eligible for return.</p>
+            </div>
+          </details>
+
+          <details class="acc-item">
+            <summary class="acc-btn">
+              Fabric & Care
+              <svg class="chev" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+            </summary>
+            <div class="acc-panel">
+              <ul>
+                <li>Fabric: Premium cotton or cotton-blend for comfort and durability.</li>
+                <li>Care: Turn inside out. Machine wash cold with like colors using mild detergent.</li>
+                <li>Dry: Tumble dry low or hang dry to preserve shape and print.</li>
+                <li>Iron: Cool iron on reverse; do not iron over prints.</li>
+                <li>Avoid: Bleach and harsh stain removers.</li>
+              </ul>
+            </div>
+          </details>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <section class="section container" id="recoSection" hidden>
+    <h2 class="best-title">YOU MAY ALSO LIKE</h2>
+    <div id="recoGrid" class="product-grid"></div>
+  </section>
+
+  <div class="pdp-bar" id="pdpBar" aria-hidden="true">
+    <div class="mutey">Selected: <span id="barVariant">Default</span> • <span class="price" id="barPrice">$0.00 USD</span></div>
+    <button class="btn primary" id="barAdd">Add</button>
+  </div>
+
+  <footer>
+    <div class="container footer-grid">
+      <div>
+        <div class="foot-logo">
+          <img class="footer-logo-img" src="/assets/img/retire-logo.png" alt="RETIRE">
+        </div>
+        <p class="muted">The Last Play.</p>
+      </div>
+      <div>
+        <strong>Pages</strong><br>
+        <a href="/">Home</a><br>
+        <a href="/products.html">Merch</a><br>
+        <a href="/retire-calculator.html">Retirement Tools</a><br>
+        <a href="/about.html">About Us</a><br>
+        <a href="/contact.html">Contact Us</a><br>
+      </div>
+      <div>
+        <strong>Follow us</strong><br>
+        <a href="https://twitter.com/thelastplaysol" target="_blank" rel="noreferrer">Twitter/X</a><br>
+        <a href="https://www.instagram.com/thelastplaysol/" target="_blank" rel="noreferrer">Instagram</a><br>
+        <a href="https://www.tiktok.com/@retireonsol" target="_blank" rel="noreferrer">TikTok</a><br>
+        <a href="https://www.youtube.com/channel/UCl6pyRjpCtRIXO2Aj_oAtdw" target="_blank" rel="noreferrer">YouTube</a><br>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Keep your site scripts (no JS needed for accordion) -->
+  <script src="/assets/js/cart.js" defer></script>
+  <script src="/assets/js/product.js" defer></script>
+  <script src="/assets/js/site.js" defer></script>
+</body>
+</html>

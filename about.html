@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About Us — RETIRE</title>
+  <meta name="theme-color" content="#000000" />
+  <link rel="icon" href="/assets/img/favicon.png" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+<body>
+  <!-- Drawer toggle (required for hamburger) -->
+  <input type="checkbox" id="drawer-toggle" hidden>
+
+  <!-- ======= HEADER ======= -->
+  <header>
+    <div class="container">
+      <div class="nav">
+        <label class="menu-btn" for="drawer-toggle" aria-label="Open menu" role="button" tabindex="0">☰</label>
+
+        <a class="brand" href="/">
+          <img class="logo-img" src="/assets/img/retire-logo.png" alt="RETIRE">
+        </a>
+
+        <div class="spacer"></div>
+
+        <form class="search" role="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" stroke="#fff" stroke-width="1.5" fill="none"></circle>
+            <path d="M20 20L17 17" stroke="#fff" stroke-width="1.5" stroke-linecap="round" fill="none"></path>
+          </svg>
+          <input placeholder="Search products..." />
+        </form>
+
+        <div class="icons">
+          <!-- IMPORTANT: id="openCart" and id="cartCount" -->
+          <a id="openCart" class="icon-btn" href="#" aria-label="Cart">
+            <svg viewBox="0 0 24 24" width="18" height="18">
+              <path d="M6 8h12l-1 12H7L6 8Z" fill="none" stroke="#EDEDED" stroke-width="1.5"></path>
+              <path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="#EDEDED" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+            <span class="cart-badge" id="cartCount" style="display:none">0</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======= LEFT NAV DRAWER (Hamburger menu) ======= -->
+  <label class="drawer-overlay" for="drawer-toggle" aria-hidden="true"></label>
+  <aside class="drawer" role="dialog" aria-modal="true" aria-label="Main menu">
+    <div class="drawer-header">
+      <div class="brand">
+      </div>
+      <label class="close-btn" for="drawer-toggle" aria-label="Close menu" role="button" tabindex="0">✕</label>
+    </div>
+    <nav class="drawer-nav">
+      <a class="drawer-link" href="/products.html">Merch</a>
+      <a class="drawer-link" href="/retire-calculator.html">Retirement Tools</a>
+      <a class="drawer-link" href="/about.html">About Us</a>
+      <a class="drawer-link" href="/contact.html">Contact Us</a>
+    </nav>
+  </aside>
+
+  <!-- ======= CART DRAWER ======= -->
+  <div class="cart-overlay"></div>
+  <aside class="cart-panel" aria-label="Cart" aria-modal="true" role="dialog">
+    <div class="cart-head">
+      <strong class="cart-title">Your Cart</strong>
+      <button id="cartClose" class="cart-close" aria-label="Close">✕</button>
+    </div>
+    <div id="cartItems" class="cart-items"></div>
+    <div class="cart-foot">
+      <div class="cart-row">
+        <span>Subtotal</span>
+        <strong id="cartSubtotal">$0.00 USD</strong>
+      </div>
+      <button id="cartCheckout" class="cart-checkout" type="button">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18">
+          <path d="M17 11V8a5 5 0 0 0-10 0v3M6 9h12v10H6z" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <span>Secure Checkout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ======= MAIN ======= -->
+  <main class="container page">
+    <h1 class="best-title">ABOUT US</h1>
+
+    <div class="page-card manifesto">
+      <p><strong>The Official Manifesto of $RETIRE:</strong></p>
+      <p><em>The Last Play for Financial Independence.</em></p>
+      <p>In light of the current state of financial systems and retirement security, we hereby extend an invitation to those who understand the importance of taking control of their financial future. This document outlines the purpose, goals, and mission of $RETIRE—a unique initiative, distinct in its vision and objectives.</p>
+
+      <p>The current economic landscape presents significant challenges to those seeking traditional retirement. With projections indicating that Social Security may be depleted within the coming decades, and the decline of pension plans across industries, a comfortable and secure retirement is increasingly out of reach for the average citizen. In light of these issues, $RETIRE serves as a critical response, providing an alternative path for those who wish to secure not only their own futures but also that of their bloodline.</p>
+
+      <h2>Objective: Securing Wealth for Generations</h2>
+      <p>$RETIRE represents a community-driven effort to build lasting wealth. This initiative is designed not as a means to chase short-term gains, but as a platform to create enduring financial stability. It prioritizes the long-term value of holding, building, and securing legacy wealth—a mission that transcends individual gain. By participating in $RETIRE, each individual contributes to a shared vision of breaking free from the limitations imposed by a system that has failed to ensure true financial security for the future.</p>
+
+      <h2>The Vision: Defying Traditional Systems</h2>
+      <p>The foundation of $RETIRE is a rejection of traditional structures that limit financial freedom. This initiative empowers participants to step outside the restrictions of pensions, Social Security, and savings plans that no longer guarantee stability. Instead, $RETIRE advocates for a movement that redefines retirement by creating a path that exists independently of government programs and outdated financial structures. This is The Last Play, a movement for those who seek independence, who understand that real wealth is built not through quick wins but through patience, resilience, and community strength.</p>
+
+      <h2>An Anti-Establishment Movement</h2>
+      <p>As financial institutions continue to erode individual security, $RETIRE offers a path to empowerment outside the boundaries set by those institutions. We recognize that current financial systems are structured to maintain control rather than to promote true independence. This movement serves as a collective effort to challenge the status quo, providing a platform for individuals who are prepared to build wealth on their own terms and free their bloodlines from dependency on an unreliable system.</p>
+
+      <h2>Your Role in This Initiative</h2>
+      <p>Your involvement in $RETIRE is essential. This initiative requires individuals who are committed to the shared vision of creating lasting wealth and retiring their families with dignity. As a member of this community, your role is to support, contribute, and uphold the values of resilience and long-term commitment. $RETIRE is built on the strength of its members, and we are strengthened by the collective power of each participant.</p>
+
+      <h2>How to Join and Contribute</h2>
+      <p>Participation in $RETIRE requires a dedication to the mission and a commitment to actively engage with the community. This includes staying informed, sharing knowledge, and encouraging others to uphold the values that define The Last Play. Through your participation, you will contribute not only to your own financial security but to a broader movement for true independence.</p>
+
+      <h2>A Call to Action</h2>
+      <p>As you consider this invitation, we urge you to reflect on the limitations of existing financial structures and the necessity of a new approach. <strong>$RETIRE is The Last Play</strong>—a stand for freedom, legacy, and wealth built on principles of independence. We welcome you to join this movement, to hold strong, and to contribute to a future where financial freedom is a reality. <em>*NFA*</em></p>
+
+      <p><strong>In Service of Financial Independence and Legacy.</strong></p>
+      <p><strong>— WE ARE, $RETIRE</strong></p>
+    </div>
+  </main>
+
+  <!-- ======= FOOTER ======= -->
+  <footer>
+    <div class="container footer-grid">
+      <div>
+        <div class="foot-logo">
+          <img class="footer-logo-img" src="/assets/img/retire-logo.png" alt="RETIRE">
+        </div>
+        <p class="muted">The Last Play.</p>
+      </div>
+      <div>
+        <strong>Pages</strong><br>
+        <a href="/">Home</a><br>
+        <a href="/products.html">Merch</a><br>
+        <a href="/retire-calculator.html">Retirement Tools</a><br>
+        <a href="/about.html">About Us</a><br>
+        <a href="/contact.html">Contact Us</a><br>
+      </div>
+      <div>
+        <strong>Follow us</strong><br>
+        <a href="https://twitter.com/thelastplaysol" target="_blank" rel="noreferrer">Twitter/X</a><br>
+        <a href="https://www.instagram.com/thelastplaysol/" target="_blank" rel="noreferrer">Instagram</a><br>
+        <a href="https://www.tiktok.com/@retireonsol" target="_blank" rel="noreferrer">TikTok</a><br>
+        <a href="https://www.youtube.com/channel/UCl6pyRjpCtRIXO2Aj_oAtdw" target="_blank" rel="noreferrer">YouTube</a><br>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/assets/js/cart.js" defer></script>
+  <script src="/assets/js/site.js" defer></script>
+</body>
+</html>

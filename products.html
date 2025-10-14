@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Merch — RETIRE</title>
+  <meta name="theme-color" content="#0b0b0c" />
+  <link rel="icon" href="/assets/img/favicon.png"/>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+
+  <!-- Druk title font + layout tune -->
+  <style>
+    /* Title font to match sitewide titles */
+    @font-face{
+      font-family: "DrukXCond-SuperItalic-Trial";
+      src: url("/assets/fonts/DrukXCond-SuperItalic-Trial.woff2") format("woff2");
+      font-weight: 800;
+      font-style: italic;
+      font-display: swap;
+    }
+
+    /* Shared title vars (same look as other pages) */
+    :root{
+      /* slightly bigger MERCH title */
+      --best-title-size: clamp(36px, 5vw, 72px);
+      --best-title-tracking: 0.06em;
+      --best-title-leading: 1.12;
+
+      --bg:#000000;--panel:#000000;--text:#ffffff;--muted:#b9bbc1;--line:rgba(255,255,255,.08);
+      --radius:16px;--gap:16px;--shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+
+    html,body{background:var(--bg);color:var(--text);}
+
+    /* Page H1 title */
+    .best-title{
+      font-family:"DrukXCond-SuperItalic-Trial",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      font-weight:800;
+      font-style:italic;
+      text-transform:uppercase;
+      font-size:var(--best-title-size);
+      letter-spacing:var(--best-title-tracking);
+      line-height:var(--best-title-leading);
+      color:#fff;
+      margin:20px 0 30px;
+      text-rendering:optimizeLegibility;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Section wrapper */
+    .merch-section{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+      margin: 18px 0 28px;
+    }
+
+    .merch-head{
+      display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:10px;
+    }
+
+    /* Section H2 titles — same styling as MERCH title but smaller (slightly increased) */
+    .merch-title{
+      font-family:'DrukXCond-SuperItalic-Trial',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      font-weight:1200;
+      font-style:italic;
+      text-transform:uppercase;
+      font-size: clamp(24px, 2.8vw, 48px);
+      letter-spacing: var(--best-title-tracking);
+      line-height: 1.05;
+      margin: 0;
+      color:#fff;
+      text-rendering:optimizeLegibility;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Grid cards */
+    .product-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap);}
+    @media (max-width: 1024px){.product-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+    @media (max-width: 720px){.product-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 520px){.product-grid{grid-template-columns:1fr;}}
+
+    .card{
+      display:flex;flex-direction:column;
+      background:#111214;border:1px solid var(--line);border-radius:12px;overflow:hidden;
+      text-decoration:none;color:var(--text);transition:transform .08s ease, border-color .2s ease;
+    }
+    .card:active{transform:scale(.98);}
+    .media{position:relative;width:100%;padding-top:100%;background:#0c0d10;overflow:hidden;}
+    .media img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;}
+    .content{padding:12px;}
+    .title{font-size:15px;line-height:1.35;margin:0 0 6px;}
+    .price{color:#fff;opacity:.9;font-weight:600;font-size:14px;}
+
+    /* Preview row: show 4 across where possible */
+    .preview-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap);}
+    @media (max-width: 1024px){.preview-row{grid-template-columns:repeat(3,minmax(0,1fr));}}
+    @media (max-width: 720px){.preview-row{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 520px){.preview-row{grid-template-columns:1fr;}}
+
+    .more-btn{
+      display:inline-block;margin:14px 0 4px;padding:10px 16px;border-radius:999px;
+      border:1px solid var(--line);background:transparent;color:var(--text);font-weight:600;
+      letter-spacing:.3px;cursor:pointer;transition:transform .08s ease,background .2s ease,border-color .2s ease;
+    }
+    .more-btn:hover{background:#141416;border-color:#1e1f22;}
+    .more-btn:active{transform:scale(.98);}
+
+    .full-collection{margin-top:12px;}
+
+    /* === Drawer close (X) pinned to top-right on Merch page === */
+.drawer-header{
+  position: relative;            /* create containing block for the X */
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  background: #000;
+}
+
+.drawer-header .close-btn{
+  position: absolute;
+  top: 10px;
+  right: 10px;                   /* <-- move X to the right */
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 10px;
+  color: #fff;
+  background: #000;
+  cursor: pointer;
+}
+
+  </style>
+</head>
+<body>
+  <input type="checkbox" id="drawer-toggle" hidden>
+  <body class="products-page">
+
+  <header>
+    <div class="container">
+      <div class="nav">
+        <label class="menu-btn" for="drawer-toggle" aria-label="Open menu" role="button" tabindex="0">☰</label>
+        <a class="brand" href="/"><img class="logo-img" src="/assets/img/retire-logo.png" alt="RETIRE"></a>
+        <div class="spacer"></div>
+        <form class="search" role="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="#fff" stroke-width="1.5" fill="none"/><path d="M20 20L17 17" stroke="#fff" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+          <input placeholder="Search products..." />
+        </form>
+        <div class="icons">
+          <a id="openCart" class="icon-btn" href="javascript:void(0)" aria-label="Cart">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M6 8h12l-1 12H7L6 8Z" fill="none" stroke="#EDEDED" stroke-width="1.5"/><path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="#EDEDED" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span class="cart-badge" id="cartCount" style="display:none">0</span>
+          </a>
+          <!-- Favorites/Wishlist removed -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======= CART DRAWER (required by cart.js) ======= -->
+  <div class="cart-overlay"></div>
+  <aside class="cart-panel" aria-label="Cart" aria-modal="true" role="dialog">
+    <div class="cart-header">
+      <strong>Your Cart</strong>
+      <button id="cartClose" class="cart-close" aria-label="Close">✕</button>
+    </div>
+    <div id="cartItems" class="cart-items"></div>
+    <div class="cart-footer">
+      <div class="cart-subrow">
+        <span>Subtotal</span>
+        <strong id="cartSubtotal">$0.00 USD</strong>
+      </div>
+      <button id="cartCheckout" class="cart-checkout" type="button">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18">
+          <path d="M17 11V8a5 5 0 0 0-10 0v3M6 9h12v10H6z" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <span>Secure Checkout</span>
+      </button>
+    </div>
+  </aside>
+
+  <label class="drawer-overlay" for="drawer-toggle" aria-hidden="true"></label>
+  <aside class="drawer" role="dialog" aria-modal="true" aria-label="Main menu">
+    <div class="drawer-header">
+      <label class="close-btn" for="drawer-toggle" aria-label="Close menu" role="button" tabindex="0">✕</label>
+    </div>
+    <nav class="drawer-nav">
+      <a class="drawer-link" href="/products.html">Merch</a>
+      <a class="drawer-link" href="/retire-calculator.html">Retirement Tools</a>
+      <a class="drawer-link" href="/about.html">About Us</a>
+      <a class="drawer-link" href="/contact.html">Contact Us</a>
+    </nav>
+  </aside>
+
+  <main class="container page">
+    <!-- Title -->
+    <h1 class="best-title">MERCH</h1>
+
+    <!-- ====== FITNESS ====== -->
+    <section class="merch-section" id="fitness-section">
+      <div class="merch-head">
+        <h2 class="merch-title">Fitness</h2>
+      </div>
+      <div class="preview-row" id="fitness-preview"></div>
+      <div class="full-collection" id="fitness-full" hidden>
+        <div class="product-grid" id="fitness-grid"></div>
+      </div>
+      <button class="more-btn" id="fitness-more">Show more</button>
+    </section>
+
+    <!-- ====== LIFESTYLE ====== -->
+    <section class="merch-section" id="lifestyle-section">
+      <div class="merch-head">
+        <h2 class="merch-title">Lifestyle</h2>
+      </div>
+      <div class="preview-row" id="lifestyle-preview"></div>
+      <div class="full-collection" id="lifestyle-full" hidden>
+        <div class="product-grid" id="lifestyle-grid"></div>
+      </div>
+      <button class="more-btn" id="lifestyle-more">Show more</button>
+    </section>
+
+    <!-- ====== ACCESSORIES ====== -->
+    <section class="merch-section" id="accessories-section">
+      <div class="merch-head">
+        <h2 class="merch-title">Accessories</h2>
+      </div>
+      <div class="preview-row" id="accessories-preview"></div>
+      <div class="full-collection" id="accessories-full" hidden>
+        <div class="product-grid" id="accessories-grid"></div>
+      </div>
+      <button class="more-btn" id="accessories-more">Show more</button>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div>
+        <div class="foot-logo">
+          <img class="footer-logo-img" src="/assets/img/retire-logo.png" alt="RETIRE">
+        </div>
+        <p class="muted">The Last Play.</p>
+      </div>
+      <div>
+        <strong>Pages</strong><br>
+        <a href="/">Home</a><br>
+        <a href="/products.html">Merch</a><br>
+        <a href="/retire-calculator.html">Retirement Tools</a><br>
+        <a href="/about.html">About Us</a><br>
+        <a href="/contact.html">Contact Us</a><br>
+      </div>
+      <div>
+        <strong>Follow us</strong><br>
+        <a href="https://twitter.com/thelastplaysol" target="_blank" rel="noreferrer">Twitter/X</a><br>
+        <a href="https://www.instagram.com/thelastplaysol/" target="_blank" rel="noreferrer">Instagram</a><br>
+        <a href="https://www.tiktok.com/@retireonsol" target="_blank" rel="noreferrer">TikTok</a><br>
+        <a href="https://www.youtube.com/channel/UCl6pyRjpCtRIXO2Aj_oAtdw" target="_blank" rel="noreferrer">YouTube</a><br>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== Storefront API: fetch collections → link cards to /product.html ===== -->
+  <script>
+    (function(){
+      const SHOP_DOMAIN = 'itbiip-xv.myshopify.com';
+      const STOREFRONT_TOKEN = 'c4477df01824efd06e5c9f40f1f2229d';
+      const API = `https://${SHOP_DOMAIN}/api/2024-10/graphql.json`;
+
+      // Numeric collection IDs
+      const NUMERIC = {
+        fitness:     '480069189855',
+        lifestyle:   '480069157087',
+        accessories: '480069222623'
+      };
+
+      // Convert numeric → GID for Storefront API
+      const GID = Object.fromEntries(
+        Object.entries(NUMERIC).map(([k, id]) => [k, `gid://shopify/Collection/${id}`])
+      );
+
+      function money(amount, code){
+        const n = Number(amount);
+        return Number.isFinite(n) ? `$${n.toFixed(2)} ${code}` : `$${amount} ${code}`;
+      }
+
+      async function fetchCollectionProducts(collectionIdGid, first=100){
+        const query = `
+          query($id: ID!, $first: Int!) {
+            collection(id: $id) {
+              products(first: $first) {
+                nodes {
+                  title handle
+                  featuredImage { url altText }
+                  priceRange { minVariantPrice { amount currencyCode } }
+                }
+              }
+            }
+          }`;
+        const res = await fetch(API, {
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json',
+            'X-Shopify-Storefront-Access-Token': STOREFRONT_TOKEN
+          },
+          body: JSON.stringify({query, variables:{id: collectionIdGid, first}})
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        return json.data?.collection?.products?.nodes || [];
+      }
+
+      function cardHTML(p){
+        const url = `/product.html?handle=${encodeURIComponent(p.handle)}`;
+        const img = p.featuredImage?.url || '/assets/img/placeholder.jpg';
+        const alt = p.featuredImage?.altText || p.title;
+        const price = money(p.priceRange.minVariantPrice.amount, p.priceRange.minVariantPrice.currencyCode);
+        return `
+          <a class="card" href="${url}">
+            <div class="media"><img src="${img}" alt="${alt}"></div>
+            <div class="content">
+              <h3 class="title">${p.title}</h3>
+              <div class="row"><span class="price">${price}</span></div>
+            </div>
+          </a>`;
+      }
+
+      function renderPreview(products, mountId){
+        const mount = document.getElementById(mountId);
+        mount.innerHTML = products.slice(0,4).map(cardHTML).join('');
+      }
+
+      function renderGrid(products, mountId){
+        const mount = document.getElementById(mountId);
+        mount.innerHTML = products.map(cardHTML).join('');
+      }
+
+      // Load previews then wire “Show more” to only show the remainder (no repeats)
+      (async ()=>{
+        try {
+          // FITNESS
+          const fit = await fetchCollectionProducts(GID.fitness, 100);
+          renderPreview(fit, 'fitness-preview');
+          hookShowMore('fitness-more', 'fitness-full', 'fitness-grid', 'fitness-preview', fit);
+
+          // LIFESTYLE
+          const life = await fetchCollectionProducts(GID.lifestyle, 100);
+          renderPreview(life, 'lifestyle-preview');
+          hookShowMore('lifestyle-more', 'lifestyle-full', 'lifestyle-grid', 'lifestyle-preview', life);
+
+          // ACCESSORIES
+          const acc = await fetchCollectionProducts(GID.accessories, 100);
+          renderPreview(acc, 'accessories-preview');
+          hookShowMore('accessories-more', 'accessories-full', 'accessories-grid', 'accessories-preview', acc);
+
+        } catch (e) {
+          console.error(e);
+          const err = `<p class="muted">Could not load products.</p>`;
+          ['fitness-preview','lifestyle-preview','accessories-preview'].forEach(id=>{
+            const el = document.getElementById(id); if (el) el.innerHTML = err;
+          });
+        }
+      })();
+
+      function hookShowMore(btnId, fullWrapId, gridId, previewId, products){
+        const btn = document.getElementById(btnId);
+        const fullWrap = document.getElementById(fullWrapId);
+        const grid = document.getElementById(gridId);
+        let open = false;
+
+        // Hide the button entirely if there are 4 or fewer items
+        if (!products || products.length <= 4){
+          btn.style.display = 'none';
+          return;
+        }
+
+        btn.addEventListener('click', ()=>{
+          open = !open;
+          if (open){
+            // Show only the items AFTER the first 4 used in the preview
+            const rest = products.slice(4);
+            renderGrid(rest, gridId);
+            fullWrap.hidden = false;
+            btn.textContent = 'Show less';
+          } else {
+            fullWrap.hidden = true;
+            grid.innerHTML = '';
+            btn.textContent = 'Show more';
+          }
+        });
+      }
+    })();
+  </script>
+
+  <!-- keep your global site logic -->
+  <script src="/assets/js/cart.js" defer></script>
+  <script src="/assets/js/site.js" defer></script>
+</body>
+</html>

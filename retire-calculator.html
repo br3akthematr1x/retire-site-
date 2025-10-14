@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Retirement Tools — RETIRE</title>
+  <meta name="description" content="RETIRE — Retirement Tools, calculators and market stats for The Last Play community." />
+  <meta name="theme-color" content="#0b0b0c" />
+
+  <link rel="icon" href="/assets/img/favicon.png" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <!-- html2canvas for screenshot capture -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
+
+  <!-- Share logic (no X API needed) -->
+  <script src="/assets/js/share-noapi.js" defer></script>
+
+  <style>
+    /* =========================================================
+       GLOBAL — PURE BLACK THEME (no greys anywhere)
+       ========================================================= */
+    :root{ --black:#0b0b0c; --text:#fff; --line:rgba(255,255,255,.10); --header-h:72px; }
+  
+    @font-face{
+      font-family:"DrukXCond-SuperItalic-Trial";
+      src:url("/assets/fonts/DrukXCond-SuperItalic-Trial.woff2") format("woff2");
+      font-weight:800; font-style:italic; font-display:swap;
+    }
+  
+    html,body{ background:#000000 !important; color:var(--text); }
+    *{ box-sizing:border-box; }
+    img,video,canvas,iframe{ background:#000000 !important; display:block; }
+  
+    /* Containers */
+    .container, .section, .page, main, header, footer,
+    .drawer, .drawer-overlay, .cart-panel, .cart-overlay{
+      background:#000000 !important; color:var(--text);
+      border-color:var(--line);
+    }
+  
+    /* Header + spacer so content never hides under it */
+    header{ position:sticky; top:0; z-index:40; }
+    .header-spacer{ height:var(--header-h); }
+  
+    /* Inputs/search/buttons */
+    input, select, textarea, button{
+      background:#000 !important; color:#fff !important;
+      border:1px solid var(--line); border-radius:10px; outline:none;
+    }
+  
+ /* === Drawer opens from the LEFT and aligns directly BELOW the entire nav/header === */
+#drawer-toggle ~ .drawer {
+    position: fixed;
+    left: -100%;
+    right: auto;
+    width: min(92vw, 380px);
+    /* Move drawer fully below the header/nav area */
+    top: calc(var(--header-h) + 20px);  /* adjust this value if your header height changes */
+    bottom: 0;
+    background: #000;
+    border-right: 1px solid var(--line);
+    transition: left 0.25s ease;
+    z-index: 1002;
+  }
+  
+  #drawer-toggle:checked ~ .drawer {
+    left: 0;
+  }
+  
+  /* Overlay matches the same offset (keeps header visible) */
+  #drawer-toggle ~ .drawer-overlay {
+    position: fixed;
+    inset: calc(var(--header-h) + 20px) 0 0 0;
+    background: rgba(0, 0, 0, 0.55);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 1001;
+  }
+  
+  #drawer-toggle:checked ~ .drawer-overlay {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  /* Drawer header bar + visible X button */
+  .drawer-header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: #000;
+    border-bottom: 1px solid var(--line);
+  }
+  
+  .close-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    line-height: 1;
+    color: #fff;
+    background: #000;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  }
+  
+  .close-btn:hover {
+    background: #0a0a0a;
+  }
+  
+  .close-btn:focus {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+  
+  
+    /* normalize drawer header spacing to match site nav exactly */
+header { --header-h: 72px; }           /* keep this in one place */
+.drawer { top: var(--header-h); }
+#drawer-toggle ~ .drawer-overlay { inset: var(--header-h) 0 0 0; }
+
+/* optional: match the header’s bottom border line visually */
+.drawer-header { padding: 14px 16px; border-bottom: 1px solid var(--line); }
+
+  
+    /* =========================================================
+       PAGE — RETIREMENT TOOLS (unchanged visuals)
+       ========================================================= */
+    #retire-pro{ padding:40px 0 64px; }
+    @media (max-width:720px){ #retire-pro{ padding-top:32px; } }
+  
+    .rp-card{ background:#000000 !important; border:1px solid var(--line); border-radius:16px; padding:18px; }
+  
+    .best-title{
+      font-family:"DrukXCond-SuperItalic-Trial",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      font-weight:800; font-style:italic; text-transform:uppercase;
+      color:#fff; letter-spacing:.06em; line-height:1.1;
+      font-size:clamp(36px,4.8vw,64px);
+      margin:2px 0 12px;
+      text-rendering:optimizeLegibility;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+  
+    .rp-chart-frame{ position:relative; width:100%; border:1px solid var(--line);
+      border-radius:12px; overflow:hidden; background:#000 !important; }
+    .rp-chart-frame iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; display:block; }
+  
+    .rp-chart-desktop{ height:640px; }
+    .rp-chart-mobile{ display:none; }
+    @media (max-width:720px){
+      .rp-chart-desktop{ display:none; }
+      .rp-chart-mobile{ display:block; height:460px; }
+    }
+  
+    .rp-tiles{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:16px 0; }
+    .rp-tile{ background:#000 !important; border:1px solid var(--line); border-radius:12px; padding:12px; }
+    .rp-tile span{ display:block; opacity:.9; font-size:12px; margin-bottom:6px; }
+    @media (max-width:980px){ .rp-tiles{ grid-template-columns:repeat(2,1fr); } }
+    @media (max-width:680px){ .rp-tiles{ grid-template-columns:1fr; } }
+  
+    .rp-tabs-row{ display:flex; align-items:center; gap:12px; margin:8px 0 14px; }
+    .rp-tabs{ display:flex; gap:8px; flex-wrap:wrap; }
+    .rp-tab{ background:#000 !important; color:#fff; border:1px solid var(--line); border-radius:999px; padding:8px 12px; cursor:pointer; }
+    .rp-tab-active{ outline:2px solid #fff; outline-offset:1px; }
+    .rp-ctl{ margin-left:auto; display:flex; align-items:center; gap:8px; }
+    @media (max-width:720px){ .rp-tabs-row{ flex-direction:column; align-items:flex-start; } .rp-ctl{ margin-left:0; } }
+  
+    .rp-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    @media (max-width:680px){ .rp-grid{ grid-template-columns:1fr; } }
+  
+    .rp-field{ margin-bottom:10px; }
+    .rp-field label{ display:block; margin-bottom:6px; font-weight:700; }
+  
+    .rp-kv{ display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px dashed var(--line); }
+    .rp-kv:last-child{ border-bottom:0; }
+    .rp-kv-emph{ border:1px solid var(--line); border-radius:12px; padding:12px; background:#000; margin-bottom:6px; }
+    .rp-current-emph{ font-size:clamp(20px,3.2vw,34px); font-weight:900; }
+  
+    .mini-chart-wrap{ margin-top:10px; }
+    .mini-chart{ width:100%; height:160px; }
+    @media (max-width:720px){ .mini-chart{ height:150px; } }
+  
+    .roi-grid{ width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+    .roi-grid th,.roi-grid td{ background:#000 !important; border-bottom:1px dashed var(--line); padding:10px 12px; white-space:nowrap; text-align:right; }
+    .roi-grid th:first-child,.roi-grid td:first-child{ text-align:left; }
+  </style>
+  
+  
+  
+</head>
+
+<body class="retire-page">
+  <input type="checkbox" id="drawer-toggle" hidden>
+
+  <!-- ======= HEADER ======= -->
+  <header>
+    <div class="container">
+      <div class="nav">
+        <label class="menu-btn" for="drawer-toggle" aria-label="Open menu" role="button" tabindex="0">☰</label>
+
+        <a class="brand" href="/">
+          <img class="logo-img" src="/assets/img/retire-logo.png" alt="RETIRE">
+        </a>
+
+        <div class="spacer"></div>
+
+        <form class="search" role="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" stroke="#fff" stroke-width="1.5" fill="none"></circle>
+            <path d="M20 20L17 17" stroke="#fff" stroke-width="1.5" stroke-linecap="round" fill="none"></path>
+          </svg>
+          <input placeholder="Search products..." />
+        </form>
+
+        <div class="icons">
+          <a id="openCart" class="icon-btn" title="Cart" href="javascript:void(0)" aria-label="Cart">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path d="M6 8h12l-1 12H7L6 8Z" fill="none" stroke="#EDEDED" stroke-width="1.5"></path>
+              <path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="#EDEDED" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+            <span class="cart-badge" id="cartCount" style="display:none">0</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Drawer/overlay (must be siblings that come AFTER the #drawer-toggle input) -->
+  <label class="drawer-overlay" for="drawer-toggle" aria-hidden="true"></label>
+  <aside class="drawer" role="dialog" aria-modal="true" aria-label="Main menu">
+    <div class="drawer-header">
+      <div class="brand">
+      </div>
+      <label class="close-btn" for="drawer-toggle" aria-label="Close menu" role="button" tabindex="0">✕</label>
+    </div>
+    <nav class="drawer-nav">
+      <a class="drawer-link" href="/products.html">Merch</a>
+      <a class="drawer-link" href="/retire-calculator.html">Retirement Tools</a>
+      <a class="drawer-link" href="/about.html">About Us</a>
+      <a class="drawer-link" href="/contact.html">Contact Us</a>
+    </nav>
+  </aside>
+
+  <!-- ======= CART DRAWER (added for cart.js) ======= -->
+  <div class="cart-overlay"></div>
+  <aside class="cart-panel" aria-label="Cart" aria-modal="true" role="dialog">
+    <div class="cart-header">
+      <strong>Your Cart</strong>
+      <button id="cartClose" class="cart-close" aria-label="Close">✕</button>
+    </div>
+    <div id="cartItems" class="cart-items"></div>
+    <div class="cart-footer">
+      <div class="cart-subrow">
+        <span>Subtotal</span>
+        <strong id="cartSubtotal">$0.00 USD</strong>
+      </div>
+      <button id="cartCheckout" class="cart-checkout" type="button">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18">
+          <path d="M17 11V8a5 5 0 0 0-10 0v3M6 9h12v10H6z" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <span>Secure Checkout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Spacer so the card below never overlaps the header -->
+  <div class="header-spacer" aria-hidden="true"></div>
+
+  <!-- ======= MAIN ======= -->
+  <section id="retire-pro" class="retire-pro">
+    <div class="rp-wrap container">
+      <!-- ONE CARD: Title + Chart together (same box), still breathing -->
+      <section class="rp-card rp-chart-only" aria-labelledby="pageTitle">
+        <h1 id="pageTitle" class="best-title">RETIREMENT TOOLS</h1>
+        <div class="rp-chart-frame rp-chart-desktop">
+          <iframe
+            title="RETIRE Price Chart"
+            loading="lazy"
+            scrolling="no"
+            src="https://dexscreener.com/solana/6HfaJiUuTXFZEfmdkQSNbvfe6i95Nh2wUVJ5dWMf7gtw?embed=1&theme=dark&trades=0&info=0"
+            allow="clipboard-write; fullscreen"
+          ></iframe>
+        </div>
+        <div class="rp-chart-frame rp-chart-mobile">
+          <iframe
+            title="RETIRE Price Chart (Mobile)"
+            loading="lazy"
+            scrolling="no"
+            src="https://dexscreener.com/solana/6HfaJiUuTXFZEfmdkQSNbvfe6i95Nh2wUVJ5dWMf7gtw?embed=1&theme=dark&trades=0&info=0"
+            allow="clipboard-write; fullscreen"
+          ></iframe>
+        </div>
+      </section>
+
+      <!-- ===== Live Market Stats ===== -->
+      <div class="rp-tiles" id="rp-tiles">
+        <div class="rp-tile"><span>Live Price</span><strong id="rp-price">$—</strong><small id="rp-change">24h: —</small></div>
+        <div class="rp-tile"><span>24h Volume</span><strong id="rp-vol">$—</strong></div>
+        <div class="rp-tile"><span>Liquidity</span><strong id="rp-liq">$—</strong></div>
+        <div class="rp-tile"><span>FDV</span><strong id="rp-fdv">$—</strong></div>
+        <div class="rp-tile"><span>Pair</span><a id="rp-pair" class="rp-link" href="#" target="_blank" rel="noopener">Open on Dexscreener</a></div>
+        <div class="rp-tile rp-upd"><span>Status</span><strong id="rp-upd">Fetching…</strong></div>
+      </div>
+
+      <!-- ===== Tabs row ===== -->
+      <div class="rp-tabs-row">
+        <div class="rp-tabs">
+          <button class="rp-tab rp-tab-active" data-tab="holdings">Your Holdings</button>
+          <button class="rp-tab" data-tab="dca">DCA Simulator</button>
+          <button class="rp-tab" data-tab="roi">ROI Calculator</button>
+        </div>
+        <div class="rp-ctl">
+          <label for="rp-ccy">Currency</label>
+          <select id="rp-ccy" aria-label="Currency"></select>
+        </div>
+      </div>
+
+      <!-- ===== Holdings ===== -->
+      <div class="rp-panel rp-panel-active" data-panel="holdings">
+        <div class="rp-grid">
+          <div class="rp-card">
+            <h3>Your Holdings</h3>
+
+            <div class="rp-field">
+              <label for="hp-amount">Amount of RETIRE you hold</label>
+              <input id="hp-amount" inputmode="decimal" placeholder="e.g., 1,000,000">
+            </div>
+
+            <div class="rp-field">
+              <label for="hp-avg">Average purchase price (USD)</label>
+              <input id="hp-avg" inputmode="decimal" placeholder="e.g., 0.005" value="0.005">
+            </div>
+
+            <div class="rp-field">
+              <label for="hp-firstdate">Date of first purchase</label>
+              <input id="hp-firstdate" type="date" placeholder="YYYY-MM-DD">
+            </div>
+
+            <div class="rp-row-inline" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+              <label class="rp-check" style="display:flex;gap:8px;align-items:center;"><input id="hp-live" type="checkbox" checked> Use live market price</label>
+              <div class="rp-inline" style="display:flex;align-items:center;gap:8px;">
+                <label for="hp-price" class="rp-inline-lbl">Manual current price (USD)</label>
+                <input id="hp-price" inputmode="decimal" placeholder="0.018" class="rp-inline-input" disabled style="width:160px;">
+              </div>
+            </div>
+
+            <div class="rp-row-inline" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+              <div class="rp-inline" style="display:flex;align-items:center;gap:8px;">
+                <label for="hp-cagr" class="rp-inline-lbl" style="min-width:150px;">Traditional 401k annual return (CAGR)</label>
+                <select id="hp-cagr" class="rp-inline-input" style="width:160px;">
+                  <option value="0.05">5%</option>
+                  <option value="0.07" selected>7%</option>
+                  <option value="0.08">8%</option>
+                  <option value="0.10">10%</option>
+                </select>
+              </div>
+              <div class="rp-inline" style="display:flex;align-items:center;gap:8px;">
+                <label for="hp-fee" class="rp-inline-lbl" style="min-width:150px;">Traditional 401k annual fee</label>
+                <select id="hp-fee" class="rp-inline-input" style="width:160px;">
+                  <option value="0.00">0.00%</option>
+                  <option value="0.0025">0.25%</option>
+                  <option value="0.005" selected>0.50%</option>
+                  <option value="0.01">1.00%</option>
+                </select>
+              </div>
+            </div>
+
+            <button id="hp-calc" class="rp-btn">Calculate</button>
+          </div>
+
+          <div class="rp-card" id="hp-results">
+            <h3>Results</h3>
+
+            <div class="rp-kv rp-kv-emph">
+              <span>Current value (RETIRE position)</span>
+              <strong id="hp-current" class="rp-current-emph">$—</strong>
+            </div>
+
+            <div class="rp-kv"><span>Your cost basis (initial dollars invested)</span><strong id="hp-cost">$—</strong></div>
+
+            <div class="rp-kv">
+              <span>Traditional 401k value over this period</span>
+              <strong id="hp-401k">$—</strong>
+            </div>
+
+            <div class="rp-kv">
+              <span>Outperformance vs traditional 401k</span>
+              <strong id="hp-diff">—</strong>
+            </div>
+
+            <div id="hp-xwrap" style="margin-top:12px; border:1px solid var(--line); border-radius:12px; padding:14px; text-align:center;">
+              <div class="rp-xvalue" id="hp-xmult">—</div>
+            </div>
+
+            <p class="rp-note" id="hp-line" style="opacity:.9; margin-top:10px;"></p>
+            <button id="hp-share" class="rp-btn" style="width:100%; margin-top:10px;">Share on X</button>
+
+            <div class="mini-chart-wrap">
+              <canvas id="hp-chart" class="mini-chart" aria-label="Holdings chart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== DCA ===== -->
+      <div class="rp-panel" data-panel="dca">
+        <div class="rp-grid">
+          <div class="rp-card">
+            <h3>RETIRE DCA Simulator</h3>
+
+            <div class="rp-field">
+              <label for="dca-amt">Contribution amount</label>
+              <input id="dca-amt" inputmode="decimal" placeholder="e.g., 250">
+              <small style="opacity:.9;">Contributed each period below.</small>
+            </div>
+
+            <div class="rp-row-inline" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+              <div class="rp-inline" style="display:flex;gap:8px;align-items:center;">
+                <label class="rp-inline-lbl">DCA frequency</label>
+                <div class="rp-seg" style="display:flex;gap:10px;">
+                  <label><input type="radio" name="dca-freq" value="daily"> Daily</label>
+                  <label><input type="radio" name="dca-freq" value="weekly"> Weekly</label>
+                  <label><input type="radio" name="dca-freq" value="monthly" checked> Monthly</label>
+                </div>
+              </div>
+              <div class="rp-inline" style="display:flex;gap:8px;align-items:center;">
+                <label for="dca-years" class="rp-inline-lbl">Years</label>
+                <input id="dca-years" inputmode="numeric" value="5" style="width:120px;">
+              </div>
+            </div>
+
+            <div class="rp-row-inline" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+              <div class="rp-inline" style="display:flex;gap:8px;align-items:center;">
+                <label for="dca-exp" class="rp-inline-lbl">Expected RETIRE CAGR</label>
+                <select id="dca-exp" style="width:180px;">
+                  <option value="0.50">50%</option>
+                  <option value="1.00" selected>100%</option>
+                  <option value="2.00">200%</option>
+                  <option value="auto">Use last 365 days (auto)</option>
+                </select>
+              </div>
+              <small id="dca-exp-note" style="opacity:.9;">“Auto” uses daily closes from Birdeye if available.</small>
+            </div>
+
+            <button id="dca-calc" class="rp-btn">Simulate</button>
+          </div>
+
+          <div class="rp-card">
+            <h3>Projection</h3>
+            <div class="rp-kv"><span>Total contributions</span><strong id="dca-contrib">$—</strong></div>
+            <div class="rp-kv"><span>Projected value (RETIRE)</span><strong id="dca-value">$—</strong></div>
+            <div class="rp-kv"><span>Traditional value (same contributions)</span><strong id="dca-401k">$—</strong></div>
+            <div class="rp-kv"><span>Difference</span><strong id="dca-diff">—</strong></div>
+
+            <div class="mini-chart-wrap">
+              <canvas id="dca-chart" class="mini-chart" aria-label="DCA chart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== ROI CALCULATOR ===== -->
+      <div class="rp-panel" data-panel="roi">
+        <div class="rp-card">
+          <h3>RETIRE ROI Calculator</h3>
+          <div style="margin:8px 0 12px;">
+            <span style="opacity:.9;margin-right:8px;">Investment</span>
+            <span class="roi-input"><span>$</span><input id="roi-invest" value="500" inputmode="decimal"></span>
+          </div>
+
+          <div style="overflow:auto;">
+            <table class="roi-grid" id="roi-table">
+              <thead>
+                <tr>
+                  <th>ROI</th>
+                  <th>Price</th>
+                  <th>Market Cap</th>
+                  <th>Investment</th>
+                </tr>
+              </thead>
+              <tbody><!-- populated by JS --></tbody>
+            </table>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= FOOTER ======= -->
+  <footer>
+    <div class="container footer-grid">
+      <div>
+        <div class="foot-logo">
+          <img class="footer-logo-img" src="/assets/img/retire-logo.png" alt="RETIRE">
+        </div>
+        <p style="opacity:.9;">The Last Play.</p>
+      </div>
+      <div>
+        <strong>Pages</strong><br>
+        <a href="/">Home</a><br>
+        <a href="/products.html">Merch</a><br>
+        <a href="/retire-calculator.html">Retirement Tools</a><br>
+        <a href="/about.html">About Us</a><br>
+        <a href="/contact.html">Contact Us</a><br>
+      </div>
+      <div>
+        <strong>Follow us</strong><br>
+        <a href="https://twitter.com/thelastplaysol" target="_blank" rel="noreferrer">Twitter/X</a><br>
+        <a href="https://www.instagram.com/thelastplaysol/" target="_blank" rel="noreferrer">Instagram</a><br>
+        <a href="https://www.tiktok.com/@retireonsol" target="_blank" rel="noreferrer">TikTok</a><br>
+        <a href="https://www.youtube.com/channel/UCl6pyRjpCtRIXO2Aj_oAtdw" target="_blank" rel="noreferrer">YouTube</a><br>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/assets/js/retire-roi.js"></script>
+  <script src="/assets/js/cart.js" defer></script>
+  <script src="/assets/js/site.js" defer></script>
+</body>
+</html>

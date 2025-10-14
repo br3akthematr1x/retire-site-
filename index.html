@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RETIRE — The Last Play</title>
+<meta name="description" content="RETIRE — apparel and goods for members of The Last Play Community." />
+<meta name="theme-color" content="#0b0b0c" />
+<link rel="icon" href="/assets/img/favicon.png"/>
+<link rel="preload" as="image" href="/assets/img/retire-hero-poster.jpg" />
+<link rel="stylesheet" href="/assets/css/style.css" />
+<!-- html2canvas for screenshot capture -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
+
+<!-- Share logic (no X API needed) -->
+<script src="/assets/js/share-noapi.js" defer></script>
+
+
+<style>
+  /* Widen container so the community link/image is larger */
+  .container {
+    max-width: 1680px;
+    width: 96%;
+    margin: 0 auto;
+  }
+
+  .retire-collection { margin-top: 8px; }
+
+  /* Keep your exact font; only improve readability (spacing/smoothing). */
+  .section .best-title{
+    text-align: left !important;
+    line-height: 1.22;
+    letter-spacing: 0.03em;
+    margin: 0 0 24px 0;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Remove any borders/frames around best seller photos */
+  #best-sellers .product-grid .card .media,
+  #best-sellers .product-grid .card .media img{
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    background: transparent !important;
+  }
+
+  /* Make the community link span the full container width */
+  #community .best-title { margin-bottom: 16px; }
+  .community-card{
+    display:block;
+    width:100%;
+    max-width:100%;
+    margin:16px 0 0 0;
+    border-radius:16px;
+    overflow:hidden;
+    background:#0d0d10;
+    border:1px solid rgba(255,255,255,.08);
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .community-card:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0,0,0,.45);
+    border-color: rgba(255,255,255,.16);
+  }
+  .community-img{ display:block; width:100%; height:auto; }
+
+  /* Helper for calculator expand button */
+  .rp-expand { display:flex; justify-content:center; margin: 12px auto 0; }
+  .rp-expand .rp-btn { width: 100%; max-width: 320px; text-align:center; }
+</style>
+</head>
+<body>
+<input type="checkbox" id="drawer-toggle" hidden>
+
+<!-- ======= HEADER ======= -->
+<header>
+  <div class="container">
+    <div class="nav">
+      <label class="menu-btn" for="drawer-toggle" aria-label="Open menu" role="button" tabindex="0">☰</label>
+
+      <a class="brand" href="/">
+        <img class="logo-img" src="/assets/img/retire-logo.png" alt="RETIRE">
+      </a>
+
+      <div class="spacer"></div>
+
+      <form class="search" role="search">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <path d="M20 20L17 17" stroke="#fff" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        </svg>
+        <input placeholder="Search products..." />
+      </form>
+
+      <div class="icons">
+        <a id="openCart" class="icon-btn" title="Cart" href="javascript:void(0)" aria-label="Cart">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M6 8h12l-1 12H7L6 8Z" fill="none" stroke="#EDEDED" stroke-width="1.5"/>
+            <path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="#EDEDED" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span class="cart-badge" id="cartCount" style="display:none">0</span>
+        </a>
+
+        <!-- FAVORITES ICON REMOVED AS REQUESTED -->
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ======= DRAWER (LEFT SIDE) ======= -->
+<label class="drawer-overlay" for="drawer-toggle" aria-hidden="true"></label>
+<aside class="drawer" role="dialog" aria-modal="true" aria-label="Main menu">
+  <div class="drawer-header">
+    <div class="brand">
+     
+    </div>
+    <label class="close-btn" for="drawer-toggle" aria-label="Close menu" role="button" tabindex="0">✕</label>
+  </div>
+  <nav class="drawer-nav">
+    <a class="drawer-link" href="/products.html">Merch</a>
+    <a class="drawer-link" href="/retire-calculator.html">Retirement Tools</a>
+    <a class="drawer-link" href="/about.html">About Us</a>
+    <a class="drawer-link" href="/contact.html">Contact Us</a>
+  </nav>
+</aside>
+
+<!-- ======= CART DRAWER (header cart only; no floating cart) ======= -->
+<div class="cart-overlay"></div>
+<aside class="cart-panel" aria-label="Cart" aria-modal="true" role="dialog">
+  <div class="cart-header">
+    <strong>Your Cart</strong>
+    <button id="cartClose" class="cart-close" aria-label="Close">✕</button>
+  </div>
+  <div id="cartItems" class="cart-items"></div>
+  <div class="cart-footer">
+    <div class="cart-subrow">
+      <span>Subtotal</span>
+      <strong id="cartSubtotal">$0.00 USD</strong>
+    </div>
+    <button id="cartCheckout" class="cart-checkout" type="button">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18">
+        <path d="M17 11V8a5 5 0 0 0-10 0v3M6 9h12v10H6z" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Secure Checkout</span>
+    </button>
+  </div>
+</aside>
+
+<!-- ======= HERO ======= -->
+<section class="hero">
+  <div class="frame">
+    <video id="heroVideo" src="/assets/video/retire-hero.mp4" autoplay muted playsinline loop poster="/assets/img/retire-hero-poster.jpg"></video>
+    <div class="overlay"></div>
+    <button id="muteToggle" class="mute-btn" aria-label="Toggle sound" title="Toggle sound">🔇</button>
+    <div id="unmuteHint" class="unmute-hint">Tap to enable sound</div>
+  </div>
+</section>
+
+<!-- ======= BEST SELLERS ======= -->
+<section class="section container" id="best-sellers">
+  <h2 class="best-title">OUR BEST SELLING PRODUCTS</h2>
+  <div class="retire-collection">
+    <div id="bestGrid" class="product-grid"></div>
+  </div>
+</section>
+
+<!-- ======= FEATURES ======= -->
+<section class="section container" id="benefits">
+  <div class="features">
+    <div class="feature">
+      <svg width="36" height="36" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4-8 4-8-4 8-4zm0 14l8-4-8-4-8 4 8 4z" stroke="#fff" fill="none"/></svg>
+      <div><strong>Sustainable Materials</strong><div class="muted">Durable, comfortable fabrics picked for everyday wear.</div></div>
+    </div>
+    <div class="feature">
+      <svg width="36" height="36" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="#fff" fill="none"/><path d="M8 12l3 3 5-6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+      <div><strong>Accepts Solana Pay</strong><div class="muted">Checkout with your crypto wallet via Solana Pay — secure and fast.</div></div>
+    </div>
+    <div class="feature">
+      <svg width="36" height="36" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="10" stroke="#fff" fill="none"/><path d="M7 8V6h6l2 2" stroke="#fff" fill="none"/></svg>
+      <div><strong>Delivery & Shipping</strong><div class="muted">Fast, tracked shipping to your door.</div></div>
+    </div>
+    <div class="feature">
+      <svg width="36" height="36" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 20V7a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v13" stroke="#fff" fill="none"/><path d="M9 11c1.5 1.5 3.5 1.5 5 0" stroke="#fff" fill="none"/></svg>
+      <div><strong>Eco-Friendly Fabrics</strong><div class="muted">Quality without compromise.</div></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ======= JOIN OUR COMMUNITY ======= -->
+<section class="section container" id="community">
+  <h2 class="best-title">JOIN OUR COMMUNITY</h2>
+  <p class="muted community-subtext">
+    Stay up to date, meet the community, and be part of The Last Play movement by clicking the photo below.
+  </p>
+  <a class="community-card" href="https://linktr.ee/thelastplaysol" target="_blank" rel="noreferrer" aria-label="Join our community on Linktree">
+    <img
+      class="community-img"
+      src="/assets/img/linktree.png"
+      alt="Join The Last Play community on Linktree"
+    >
+  </a>
+</section>
+
+<!-- ======= INLINE CALCULATOR (Your Holdings left + Results right) ======= -->
+<section class="section container" id="retire-pro" >
+  <h2 class="best-title">RETIRE VS YOUR TRADITIONAL 401K PLAN</h2>
+  <div class="rp-ctl" style="margin-bottom:10px;">
+    <label for="rp-ccy">Currency</label>
+    <select id="rp-ccy" aria-label="Currency"></select>
+  </div>
+
+  <div class="rp-grid">
+    <!-- Left card: Your Holdings -->
+    <div class="rp-card">
+      <h3>Your Holdings</h3>
+
+      <div class="rp-field">
+        <label for="hp-amount">Amount of RETIRE you hold</label>
+        <input id="hp-amount" inputmode="decimal" placeholder="e.g., 1,000,000">
+      </div>
+
+      <div class="rp-field">
+        <label for="hp-avg">Average purchase price (USD)</label>
+        <input id="hp-avg" inputmode="decimal" placeholder="e.g., 0.005" value="0.005">
+      </div>
+
+      <!-- ADVANCED CONTROLS REMOVED ON HOMEPAGE:
+           - Date of first purchase
+           - Live/manual toggle & manual price
+           - 401k CAGR and fee
+           Keep the script happy by providing a hidden live toggle (checked). -->
+      <input id="hp-live" type="checkbox" checked hidden>
+
+      <button id="hp-calc" class="rp-btn">Calculate</button>
+    </div>
+
+    <!-- Right card: Results -->
+    <div class="rp-card" id="hp-results">
+      <h3>Results</h3>
+
+      <div class="rp-kv rp-kv-emph">
+        <span>Current value (RETIRE position)</span>
+        <strong id="hp-current" class="rp-current-emph">$—</strong>
+      </div>
+
+      <div class="rp-kv"><span>Your cost basis (initial dollars invested)</span><strong id="hp-cost">$—</strong></div>
+
+      <div class="rp-kv">
+        <span>Traditional 401k value over this period</span>
+        <strong id="hp-401k">$—</strong>
+      </div>
+
+      <div class="rp-kv">
+        <span>Outperformance vs traditional 401k</span>
+        <strong id="hp-diff">—</strong>
+      </div>
+
+      <div class="rp-xwrap" id="hp-xwrap" hidden>
+       
+        <div class="rp-xvalue" id="hp-xmult">—</div>
+      </div>
+
+      <p class="rp-note" id="hp-line"></p>
+      <button id="hp-share" class="rp-btn rp-btn-secondary">Share on X</button>
+      
+    </div>
+  </div>
+
+  <!-- Expand button under the two-card layout -->
+  <div class="rp-expand">
+    <a href="/retire-calculator.html" class="rp-btn rp-btn-secondary">Show All Tools</a>
+  </div>
+</section>
+
+<!-- include your main stylesheet and the shared script if not already on the page -->
+<link rel="stylesheet" href="/assets/css/style.css">
+<script src="/assets/js/retire-roi.js"></script>
+
+
+<!-- ======= FOOTER ======= -->
+<footer>
+  <div class="container footer-grid">
+    <div>
+      <div class="foot-logo">
+        <img class="footer-logo-img" src="/assets/img/retire-logo.png" alt="RETIRE">
+      </div>
+      <p class="muted">The Last Play.</p>
+    </div>
+    <div>
+      <strong>Pages</strong><br>
+      <a href="/">Home</a><br>
+      <a href="/products.html">Merch</a><br>
+      <a href="/retire-calculator.html">Retirement Tools</a><br>
+      <a href="/about.html">About Us</a><br>
+      <a href="/contact.html">Contact Us</a><br>
+    </div>
+    <div>
+      <strong>Follow us</strong><br>
+      <a href="https://twitter.com/thelastplaysol" target="_blank" rel="noreferrer">Twitter/X</a><br>
+      <a href="https://www.instagram.com/thelastplaysol/" target="_blank" rel="noreferrer">Instagram</a><br>
+      <a href="https://www.tiktok.com/@retireonsol" target="_blank" rel="noreferrer">TikTok</a><br>
+      <a href="https://www.youtube.com/channel/UCl6pyRjpCtRIXO2Aj_oAtdw" target="_blank" rel="noreferrer">YouTube</a><br>
+    </div>
+  </div>
+</footer>
+
+<!-- Best Sellers via Storefront API (unchanged) -->
+<script>
+(function () {
+  const SHOP_DOMAIN = 'itbiip-xv.myshopify.com';
+  const STOREFRONT_TOKEN = 'c4477df01824efd06e5c9f40f1f2229d';
+  const COLLECTION_GID = 'gid://shopify/Collection/478427971807';
+  const API = `https://${SHOP_DOMAIN}/api/2024-10/graphql.json`;
+
+  function money(amount, code){
+    const n = Number(amount);
+    return Number.isFinite(n) ? `$${n.toFixed(2)} ${code}` : `$${amount} ${code}`;
+  }
+
+  async function fetchCollection(gid, first=4){
+    const query = `
+      query($id: ID!, $first: Int!) {
+        collection(id: $id) {
+          products(first: $first) {
+            nodes {
+              title handle
+              featuredImage { url altText }
+              priceRange { minVariantPrice { amount currencyCode } }
+            }
+          }
+        }
+      }`;
+    const res = await fetch(API, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'X-Shopify-Storefront-Access-Token': STOREFRONT_TOKEN
+      },
+      body: JSON.stringify({query, variables:{id: gid, first}})
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    return json.data?.collection?.products?.nodes || [];
+  }
+
+  function renderCards(products, mountId){
+    const grid = document.getElementById(mountId);
+    if (!grid) return;
+    grid.innerHTML = products.map(p=>{
+      const url = `/product.html?handle=${encodeURIComponent(p.handle)}`;
+      const img = p.featuredImage?.url || '/assets/img/placeholder.jpg';
+      const alt = p.featuredImage?.altText || p.title;
+      const price = money(p.priceRange.minVariantPrice.amount, p.priceRange.minVariantPrice.currencyCode);
+      return `
+        <a class="card" href="${url}">
+          <div class="media"><img src="${img}" alt="${alt}"></div>
+          <div class="content">
+            <h3 class="title">${p.title}</h3>
+            <div class="row"><span class="price">${price}</span></div>
+          </div>
+        </a>`;
+    }).join('');
+  }
+
+  (async ()=>{
+    try {
+      const items = await fetchCollection(COLLECTION_GID, 4);
+      renderCards(items, 'bestGrid');
+    } catch (e) {
+      const grid = document.getElementById('bestGrid');
+      if (grid) grid.innerHTML = `<p class="muted">Could not load products.</p>`;
+    }
+  })();
+})();
+</script>
+
+<!-- Scripts -->
+<script src="/assets/js/cart.js" defer></script>
+<script src="/assets/js/site.js" defer></script>
+</body>
+</html>
