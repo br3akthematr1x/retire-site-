@@ -1699,4 +1699,11 @@ body.product-page .pdp-thumb img{
     border:1px solid var(--line);
     background:transparent;
   }
+  @media (max-width: 600px) {
+    #fitness-section   h2.merch-title,
+    #lifestyle-section h2.merch-title,
+    #accessories-section h2.merch-title {
+      font-size: 38px !important;
+    }
+  }
   

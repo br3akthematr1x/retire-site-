@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Merch — RETIRE</title>
-  <meta name="theme-color" content="#0b0b0c" />
+  <meta name="theme-color" content="#000000" />
   <link rel="icon" href="/assets/img/favicon.png"/>
   <link rel="stylesheet" href="/assets/css/style.css" />
 
@@ -26,8 +26,8 @@
       --best-title-tracking: 0.06em;
       --best-title-leading: 1.12;
 
-      --bg:#000000;--panel:#000000;--text:#ffffff;--muted:#b9bbc1;--line:rgba(255,255,255,.08);
-      --radius:16px;--gap:16px;--shadow:0 10px 30px rgba(0,0,0,.35);
+      --bg:#000000;--panel:#000000;--text:#ffffff;--muted:#b9bbc1;--line:#000000;
+      --radius:16px;--gap:16px;--shadow:0 10px 30px #000000;
     }
 
     html,body{background:var(--bg);color:var(--text);}
@@ -63,21 +63,28 @@
     }
 
     /* Section H2 titles — same styling as MERCH title but smaller (slightly increased) */
-    .merch-title{
-      font-family:'DrukXCond-SuperItalic-Trial',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      font-weight:1200;
-      font-style:italic;
-      text-transform:uppercase;
-      font-size: clamp(24px, 2.8vw, 48px);
+    .merch-title {
+      font-family: 'DrukXCond-SuperItalic-Trial', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-weight: 1200;
+      font-style: italic;
+      text-transform: uppercase;
+      font-size: clamp(30px, 3.75vw, 72px);
       letter-spacing: var(--best-title-tracking);
       line-height: 1.05;
       margin: 0;
-      color:#fff;
-      text-rendering:optimizeLegibility;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
+      color: #fff;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-
+    
+    /* 📱 Force bigger titles on mobile */
+    @media (max-width: 600px) {
+      .merch-title {
+        font-size: 38px;  /* fixed size ensures it's larger */
+      }
+    }
+    
     /* Grid cards */
     .product-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap);}
     @media (max-width: 1024px){.product-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
@@ -86,11 +93,11 @@
 
     .card{
       display:flex;flex-direction:column;
-      background:#111214;border:1px solid var(--line);border-radius:12px;overflow:hidden;
+      background:#000000;border:1px solid var(--line);border-radius:12px;overflow:hidden;
       text-decoration:none;color:var(--text);transition:transform .08s ease, border-color .2s ease;
     }
     .card:active{transform:scale(.98);}
-    .media{position:relative;width:100%;padding-top:100%;background:#0c0d10;overflow:hidden;}
+    .media{position:relative;width:100%;padding-top:100%;background:#000000;overflow:hidden;}
     .media img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;}
     .content{padding:12px;}
     .title{font-size:15px;line-height:1.35;margin:0 0 6px;}
@@ -138,9 +145,8 @@
 
   </style>
 </head>
-<body>
+<body class="products-page">
   <input type="checkbox" id="drawer-toggle" hidden>
-  <body class="products-page">
 
   <header>
     <div class="container">
