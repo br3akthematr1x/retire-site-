@@ -1618,4 +1618,85 @@ body.product-page .pdp-thumb img{
   @media (max-width:900px){
     .pdp{ padding-bottom: calc(110px + env(safe-area-inset-bottom,0px)) !important; }
   }
+  .grid-more-wrap{display:flex;justify-content:center;margin-top:16px}
+.show-more-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 18px;border-radius:999px;
+  border:1px solid var(--line);
+  background:transparent;color:var(--text);
+  font-weight:600;text-decoration:none;cursor:pointer
+}
+.show-more-btn:hover{background:#151517}
+.footer-title{
+    display:block;
+    font-weight:800;
+    font-size:1rem;        /* ~16px on mobile */
+    letter-spacing:.02em;
+    color:var(--text);
+    margin-bottom:10px;
+  }
+  @media (min-width:768px){
+    .footer-title{font-size:1.125rem;} /* ~18px on desktop */
+  }
+  .grid-more-wrap{
+    display:flex;
+    justify-content:flex-start;   /* left-align */
+    margin-top:16px;
+  }
+  
+  .show-more-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:12px 18px; border-radius:999px;
+    text-decoration:none;
+    border:1px solid var(--line);   /* keep outline like merch */
+    background:transparent;         /* let .rp-btn hover take over */
+  }
+  /* JOIN OUR COMMUNITY image full-width, scoped to this section only */
+#community .community-card{
+    display:block;
+    width:100%;
+    border-radius:24px;      /* keep your rounded corners */
+    overflow:hidden;         /* clip the image to the radius */
+    /* If this section sits in a grid, span full width */
+    grid-column:1 / -1;
+  }
+  
+  #community .community-img{
+    display:block;
+    width:100% !important;   /* force full width */
+    max-width:100% !important;
+    height:auto;             /* keep aspect ratio */
+  }
+  #community .community-card { padding:0; }
+/* JOIN OUR COMMUNITY — force full-width image */
+#community .community-card{
+    display:block !important;
+    width:100% !important;
+    max-width:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+    border-radius:24px;
+    overflow:hidden;
+    grid-column:1 / -1 !important;     /* if parent is a grid */
+    align-self:stretch !important;      /* if parent is flex */
+  }
+  
+  #community .community-img{
+    display:block !important;
+    width:100% !important;
+    max-width:100% !important;
+    height:auto !important;             /* keep aspect ratio */
+  }
+  .tools-more-wrap{
+    display:flex;
+    justify-content:flex-start;
+    margin-top:16px;
+  }
+  .show-all-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:12px 18px; border-radius:999px;
+    text-decoration:none;
+    border:1px solid var(--line);
+    background:transparent;
+  }
   
