@@ -9,12 +9,12 @@
 <link rel="icon" href="/assets/img/favicon.png"/>
 <link rel="preload" as="image" href="/assets/img/retire-hero-poster.jpg" />
 <link rel="stylesheet" href="/assets/css/style.css" />
+
 <!-- html2canvas for screenshot capture -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
-
-<!-- Share logic (no X API needed) -->
+<!-- Share logic (no X API needed). 
+     TIP for pure-black export: in share-noapi.js, use `const BG='#000'` for capture background. -->
 <script src="/assets/js/share-noapi.js" defer></script>
-
 
 <style>
   /* Widen container so the community link/image is larger */
@@ -37,7 +37,7 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Remove any borders/frames around best seller photos */
+  /* Remove borders/frames around best seller photos */
   #best-sellers .product-grid .card .media,
   #best-sellers .product-grid .card .media img{
     border: none !important;
@@ -55,7 +55,7 @@
     margin:16px 0 0 0;
     border-radius:16px;
     overflow:hidden;
-    background:#0d0d10;
+    background:#000000;
     border:1px solid rgba(255,255,255,.08);
     transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
   }
@@ -69,7 +69,208 @@
   /* Helper for calculator expand button */
   .rp-expand { display:flex; justify-content:center; margin: 12px auto 0; }
   .rp-expand .rp-btn { width: 100%; max-width: 320px; text-align:center; }
+
+  /* ===== Results alignment ===== */
+  #hp-results .rp-kv{
+    display:grid;
+    grid-template-columns: 1fr auto;
+    align-items:center;
+    gap:12px;
+    padding:10px 2px;
+  }
+  #hp-results .rp-kv span{
+    color:#d9d9dc;
+    font-size:14px;
+    line-height:1.3;
+  }
+  #hp-results .rp-kv strong{
+    font-variant-numeric: tabular-nums;
+    text-align:right;
+    font-weight:700;
+    letter-spacing:.3px;
+  }
+
+  /* Emphasized current value pill */
+  #hp-results .rp-kv-emph{ padding:0; }
+  #hp-results .rp-kv-emph > span{
+    display:block;
+    background:#141416;
+    border:1px solid #2a2a2e;
+    padding:14px 16px;
+    border-radius:16px;
+    margin-bottom:10px;
+  }
+  #hp-current{ font-size:22px; }
+
+  /* ===== Screenshot panel (shareable black card) ===== */
+  #hp-xwrap{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;              /* centers vertically */
+    align-items:center;
+    text-align:center;
+    background:#000;
+    border:1px solid #000;
+    border-radius:18px;
+    padding:40px 16px;
+    margin-top:14px;
+    min-height:400px;                    /* slightly taller for balance */
+    box-sizing:border-box;
+    position:relative;
+  }
+
+  /* Text block centered perfectly in the visible area */
+  #hp-xmult{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-weight:800;
+    font-size:clamp(22px, 6.5vw, 32px);  /* a touch larger */
+    line-height:1.25;
+    letter-spacing:.2px;
+    text-align:center;
+    margin:0 auto;
+    text-wrap:balance;
+    max-width:28ch;
+
+    /* visually center the text block a bit lower than exact mid */
+    transform: translateY(8%);
+  }
+
+  /* First line: number + “greater” inline */
+  #hp-xmult .first-line{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:baseline;
+    gap:6px;
+  }
+  #hp-xmult .first-line strong{
+    color:#39e07b;
+    font-weight:1200;
+  }
+  #hp-xmult .first-line span{
+    color:#fff;
+    font-weight:800;
+  }
+
+  /* Second line */
+  #hp-xmult .second-line{
+    margin-top:4px;
+  }
+
+  /* Logo centered under text */
+  .rp-brandmark{
+    width:90px;
+    height:auto;
+    opacity:.95;
+    margin-top:20px;
+  }
+
+  /* Full-width stacked buttons */
+  #retire-pro .rp-btn{
+    width:100%;
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+  }
+  #share-x{ margin-top:14px; }
+  .tools-more-wrap{ margin-top:12px; }
+
+  /* Small screens */
+  @media (max-width:520px){
+    #hp-results h3{ margin-bottom:10px; }
+    #hp-results .rp-kv{ padding:8px 0; }
+    #hp-xwrap{ min-height:360px; padding:28px 18px; }
+    #hp-xmult{ font-size:clamp(20px, 6vw, 28px); transform:translateY(6%); }
+    .rp-brandmark{ margin-top:30px; width:80px; }
+  }
+
+/* Only hide the screenshot panel until we actually have a result */
+#hp-xwrap[hidden] { display: none !important; }
+
+/* Make the multiple green no matter how the HTML is written */
+#hp-xmult .rp-xnum,
+#hp-xmult strong {
+  color: #39e07b;
+  font-weight: 900;
+}
+
+
+/* 2) TRUE visual centering: center text, anchor logo */
+#hp-xwrap{
+  position: relative;
+  display: block;                /* no flex centering on the group */
+  background:#000;
+  border:1px solid #000;
+  border-radius:18px;
+  margin-top:14px;
+  min-height:400px;
+  padding: 24px 16px;            /* side padding only */
+  box-sizing:border-box;
+}
+
+/* Center the text exactly in the box */
+#hp-xmult{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);  /* perfect center */
+  width: calc(100% - 32px);
+  max-width: 28ch;
+  text-align: center;
+  color:#fff;
+  font-weight:800;
+  font-size: clamp(22px, 6.5vw, 32px);
+  line-height:1.25;
+  letter-spacing:.2px;
+}
+
+/* First line: number + “greater” inline */
+#hp-xmult .first-line{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:baseline;
+  gap:6px;
+}
+#hp-xmult .first-line strong{ color:#39e07b; font-weight:900; }
+
+/* Second line */
+#hp-xmult .second-line{ margin-top:4px; }
+
+/* Anchor logo to the bottom independently of text */
+.rp-brandmark{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 20px;
+  width: 90px;
+  height: auto;
+  opacity:.95;
+}
+
+/* 3) Force green multiple even if markup varies */
+#hp-xmult .rp-xnum,
+#hp-xmult strong {
+  color:#39e07b;
+  font-weight:900;
+}
+
+/* Small screens */
+@media (max-width:520px){
+  #hp-xwrap{ min-height:360px; }
+  #hp-xmult{ font-size: clamp(20px, 6vw, 28px); }
+  .rp-brandmark{ width: 80px; bottom: 16px; }
+}
+
 </style>
+
+
+
 </head>
 <body>
 <input type="checkbox" id="drawer-toggle" hidden>
@@ -102,7 +303,6 @@
           </svg>
           <span class="cart-badge" id="cartCount" style="display:none">0</span>
         </a>
-
         <!-- FAVORITES ICON REMOVED AS REQUESTED -->
       </div>
     </div>
@@ -113,9 +313,7 @@
 <label class="drawer-overlay" for="drawer-toggle" aria-hidden="true"></label>
 <aside class="drawer" role="dialog" aria-modal="true" aria-label="Main menu">
   <div class="drawer-header">
-    <div class="brand">
-     
-    </div>
+    <div class="brand"></div>
     <label class="close-btn" for="drawer-toggle" aria-label="Close menu" role="button" tabindex="0">✕</label>
   </div>
   <nav class="drawer-nav">
@@ -126,7 +324,7 @@
   </nav>
 </aside>
 
-<!-- ======= CART DRAWER (header cart only; no floating cart) ======= -->
+<!-- ======= CART DRAWER ======= -->
 <div class="cart-overlay"></div>
 <aside class="cart-panel" aria-label="Cart" aria-modal="true" role="dialog">
   <div class="cart-header">
@@ -163,17 +361,11 @@
   <h2 class="best-title">OUR BEST SELLING PRODUCTS</h2>
   <div class="retire-collection">
     <div id="bestGrid" class="product-grid"></div>
-
-    <!-- Show more → link to products.html -->
     <div class="grid-more-wrap">
-      <a href="/products.html" class="rp-btn show-more-btn" aria-label="View all products">
-        Show more
-      </a>
+      <a href="/products.html" class="rp-btn show-more-btn" aria-label="View all products">Show more</a>
     </div>
-    
   </div>
 </section>
-
 
 <!-- ======= FEATURES ======= -->
 <section class="section container" id="benefits">
@@ -197,22 +389,18 @@
   </div>
 </section>
 
-
 <!-- ======= JOIN OUR COMMUNITY ======= -->
 <section class="section container" id="community">
   <h2 class="best-title">JOIN OUR COMMUNITY</h2>
   <a class="community-card" href="https://linktr.ee/thelastplaysol" target="_blank" rel="noreferrer" aria-label="Join our community on Linktree">
-    <img
-      class="community-img"
-      src="/assets/img/linktree.png"
-      alt="Join The Last Play community on Linktree"
-    >
+    <img class="community-img" src="/assets/img/linktree.png" alt="Join The Last Play community on Linktree">
   </a>
 </section>
 
-<!-- ======= INLINE CALCULATOR (Your Holdings left + Results right) ======= -->
-<section class="section container" id="retire-pro" >
+<!-- ======= INLINE CALCULATOR ======= -->
+<section class="section container" id="retire-pro">
   <h2 class="best-title">RETIRE VS YOUR TRADITIONAL 401K PLAN</h2>
+
   <div class="rp-ctl" style="margin-bottom:10px;">
     <label for="rp-ccy">Currency</label>
     <select id="rp-ccy" aria-label="Currency"></select>
@@ -233,11 +421,7 @@
         <input id="hp-avg" inputmode="decimal" placeholder="e.g., 0.005" value="0.005">
       </div>
 
-      <!-- ADVANCED CONTROLS REMOVED ON HOMEPAGE:
-           - Date of first purchase
-           - Live/manual toggle & manual price
-           - 401k CAGR and fee
-           Keep the script happy by providing a hidden live toggle (checked). -->
+      <!-- ADVANCED CONTROLS REMOVED ON HOMEPAGE -->
       <input id="hp-live" type="checkbox" checked hidden>
 
       <button id="hp-calc" class="rp-btn">Calculate</button>
@@ -248,42 +432,58 @@
       <h3>Results</h3>
 
       <div class="rp-kv rp-kv-emph">
-        <span>Current value (RETIRE position)</span>
+        Current RETIRE Value
         <strong id="hp-current" class="rp-current-emph">$—</strong>
       </div>
 
-      <div class="rp-kv"><span>Your cost basis (initial dollars invested)</span><strong id="hp-cost">$—</strong></div>
+      <div class="rp-kv">
+        <span>Your Initial Investment</span>
+        <strong id="hp-cost">$—</strong>
+      </div>
 
       <div class="rp-kv">
-        <span>Traditional 401k value over this period</span>
+        <span>Traditional 401k Value</span>
         <strong id="hp-401k">$—</strong>
       </div>
 
       <div class="rp-kv">
-        <span>Outperformance vs traditional 401k</span>
+        <span>Outperformance vs Traditional 401k</span>
         <strong id="hp-diff">—</strong>
       </div>
 
+      <!-- Centered black panel + larger brandmark (screenshot target) -->
       <div class="rp-xwrap" id="hp-xwrap" hidden>
-       
-        <div class="rp-xvalue" id="hp-xmult">—</div>
-    
+        <!-- Wrap the number in <strong> for green accent -->
+          <div id="hp-xmult">
+            <div class="first-line">
+              <strong>17.11×</strong>
+              <span>greater gain </span>
+              
+            </div>
+            <div class="second-line">
+               than a traditional 401k over this period
+            </div>
+          </div>
+          
+        <img id="hp-brandmark" class="rp-brandmark" src="/assets/img/retire-logo.png" alt="RETIRE">
+      </div>
     </div>
   </div>
 
-  <!-- Expand button under the two-card layout -->
+  <!-- Full-width stacked buttons -->
+  <button id="share-x" class="rp-btn" aria-label="Share results on X">
+    <span style="display:inline-block;transform:translateY(1px);margin-right:8px">𝕏</span>
+    Share on X
+  </button>
+
   <div class="tools-more-wrap">
-    <a href="/retire-calculator.html" class="rp-btn show-all-btn" aria-label="Open all tools">
-      Show All Tools
-    </a>
+    <a href="/retire-calculator.html" class="rp-btn show-all-btn" aria-label="Open all tools">Show All Tools</a>
   </div>
-  
 </section>
 
 <!-- include your main stylesheet and the shared script if not already on the page -->
 <link rel="stylesheet" href="/assets/css/style.css">
 <script src="/assets/js/retire-roi.js"></script>
-
 
 <!-- ======= FOOTER ======= -->
 <footer>
@@ -295,8 +495,8 @@
       </div>
       <p class="muted">The Last Play.</p>
     </div>
-      <div class="footer-col">
-        <strong class="footer-title">Pages</strong>
+    <div class="footer-col">
+      <strong class="footer-title">Pages</strong>
       <a href="/">Home</a><br>
       <a href="/products.html">Merch</a><br>
       <a href="/retire-calculator.html">Retirement Tools</a><br>
